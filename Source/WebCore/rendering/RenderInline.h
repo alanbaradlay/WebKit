@@ -119,8 +119,8 @@ private:
     void imageChanged(WrappedImagePtr, const IntRect* = 0) final;
 };
 
-bool isEmptyInline(const RenderInline&);
-RenderObject* firstContentfulChild(RenderInline&);
+bool isEmptyInline(const RenderBoxModelObject&);
+RenderObject* firstContentfulChild(RenderBoxModelObject&);
 
 } // namespace WebCore
 
