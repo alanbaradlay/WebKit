@@ -96,6 +96,7 @@ public:
     virtual LayoutRect borderBoundingBox() const = 0;
 
     virtual LayoutRect NODELETE borderBoxRectInContainer() const;
+    virtual LayoutRect NODELETE visualOverflowRect() const;
 
     // These return the CSS computed padding values.
     inline LayoutUnit computedCSSPaddingTop() const;
