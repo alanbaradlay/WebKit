@@ -140,6 +140,26 @@ bool PositionedLayoutConstraints::isParentOpposingContainingBlock() const
     return parentFlipped != containingBlockFlipped;
 }
 
+bool PositionedLayoutConstraints::usesStaticPosition(const Style::ComputedStyle& style, LogicalBoxAxis axis, bool isHorizontalWritingMode)
+{
+    if (!style.positionArea().isNone())
+        return false;
+    if (axis == LogicalBoxAxis::Inline)
+        return style.hasStaticInlinePosition(isHorizontalWritingMode) && !style.justifySelf().isAnchorCenter();
+    return style.hasStaticBlockPosition(isHorizontalWritingMode) && !style.alignSelf().isAnchorCenter();
+}
+
+LayoutSize PositionedLayoutConstraints::containingBlockOffsetForNonStaticAxes(const RenderBoxModelObject& container, const Style::ComputedStyle& outOfFlowBoxStyle)
+{
+    auto isHorizontal = container.writingMode().isHorizontal();
+    auto offset = toLayoutSize(container.firstFragmentBorderBoxRect().location());
+    if (usesStaticPosition(outOfFlowBoxStyle, LogicalBoxAxis::Inline, isHorizontal))
+        isHorizontal ? offset.setWidth(0_lu) : offset.setHeight(0_lu);
+    if (usesStaticPosition(outOfFlowBoxStyle, LogicalBoxAxis::Block, isHorizontal))
+        isHorizontal ? offset.setHeight(0_lu) : offset.setWidth(0_lu);
+    return offset;
+}
+
 void PositionedLayoutConstraints::captureInsets()
 {
     bool isHorizontal = BoxAxis::Horizontal == m_physicalAxis;
