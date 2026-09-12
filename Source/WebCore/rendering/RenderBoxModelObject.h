@@ -96,6 +96,8 @@ public:
     virtual LayoutRect borderBoundingBox() const = 0;
 
     virtual LayoutRect NODELETE borderBoxRectInContainer() const;
+    virtual Vector<FloatRect> localBorderBoxRects() const;
+    void boundingRects(Vector<LayoutRect>&, const LayoutPoint& accumulatedOffset) const final;
 
     // These return the CSS computed padding values.
     inline LayoutUnit computedCSSPaddingTop() const;
