@@ -524,7 +524,6 @@ public:
     FloatRect objectBoundingBox() const override { return borderBoxRect(); }
 
     RepaintRects localRectsForRepaint(RepaintOutlineBounds) const override;
-    std::optional<RepaintRects> computeVisibleRectsInContainer(const RepaintRects&, const RenderLayerModelObject* container, const VisibleRectContext&, VisibleRectState) const override;
     void repaintDuringLayoutIfMoved(const LayoutRect&);
     virtual void repaintOverhangingFloats(bool paintAllDescendants);
 
@@ -711,7 +710,7 @@ private:
 
     LayoutRect frameRectForStickyPositioning() const override { return borderBoxRectInContainer(); }
 
-    RepaintRects computeVisibleRectsUsingPaintOffset(const RepaintRects&) const;
+    RepaintRects computeVisibleRectsUsingPaintOffset(const RepaintRects&) const final;
     
     LayoutPoint topLeftLocationWithFlipping() const;
 
