@@ -127,25 +127,19 @@ FlexLayoutItems FlexLayout::buildFlexLayoutItems(RelayoutChildren relayoutChildr
         CheckedRef flexItem = *renderer;
 
         // Before running the flex algorithm, 'auto' has a margin of 0.
-        // Also, if we're not auto sizing, we don't do a layout that computes the start/end margins.
         auto flexItemMarginValue = [&](auto& margin) {
             // When resolving the margins, we use the content size for resolving percent and calc (for percents in calc expressions) margins.
             // Fortunately, percent margins are always computed with respect to the block's width, even for margin-top and margin-bottom.
             return Style::evaluateMinimum<LayoutUnit>(margin, flexBox().contentBoxLogicalWidth(), flexBox().style().usedZoomForLength());
         };
-        if (constraints.isHorizontalFlow) {
-            flexItem->setMarginLeft(flexItemMarginValue(flexItem->style().marginLeft()));
-            flexItem->setMarginRight(flexItemMarginValue(flexItem->style().marginRight()));
-        } else {
-            flexItem->setMarginTop(flexItemMarginValue(flexItem->style().marginTop()));
-            flexItem->setMarginBottom(flexItemMarginValue(flexItem->style().marginBottom()));
-        }
+        auto& style = flexItem->style();
+        auto margins = LayoutBoxExtent { flexItemMarginValue(style.marginTop()), flexItemMarginValue(style.marginRight()), flexItemMarginValue(style.marginBottom()), flexItemMarginValue(style.marginLeft()) };
 
         auto everHadLayout = flexItem->everHadLayout();
         if (flexItem->shouldInvalidateContentWidths())
             flexItem->invalidateContentLogicalWidths(MarkingBehavior::MarkOnlyThis);
         flexBox().updateBlockChildDirtyBitsBeforeLayout(relayoutChildren, flexItem.get());
-        flexLayoutItems.append({ flexItem.get(), constraints.isHorizontalFlow, everHadLayout, relayoutChildren == RelayoutChildren::Yes });
+        flexLayoutItems.append({ flexItem.get(), constraints.isHorizontalFlow, margins, everHadLayout, relayoutChildren == RelayoutChildren::Yes });
     }
     return flexLayoutItems;
 }
