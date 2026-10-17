@@ -235,7 +235,8 @@ LayoutOptionalOutsets RenderFlexibleBox::allowedLayoutOverflow() const
 
 std::pair<LayoutUnit, LayoutUnit> RenderFlexibleBox::computeIntrinsicLogicalWidths() const
 {
-    return m_flexLayout.computeIntrinsicLogicalWidths();
+    SUPPRESS_MEMORY_UNSAFE_CAST auto& flexLayout = const_cast<LayoutIntegration::FlexLayout&>(m_flexLayout);
+    return flexLayout.computeIntrinsicLogicalWidths();
 }
 
 // This method is only called whenever a descendant of a flex item wants to resolve a percentage in its

@@ -127,6 +127,40 @@ FlexFormattingContext::Result FlexFormattingContext::layout(FlexLayoutItems& fle
     return m_result;
 }
 
+std::pair<LayoutUnit, LayoutUnit> FlexFormattingContext::minimumMaximumContentSize(const Vector<IntrinsicWidthContribution>& contributions)
+{
+    auto minimumContentSize = LayoutUnit { };
+    auto maximumContentSize = LayoutUnit { };
+
+    for (auto& contribution : contributions) {
+        if (!m_constraints.isColumnFlow) {
+            maximumContentSize += contribution.maximum;
+            if (m_constraints.isMultiline) {
+                // For multiline, the min preferred width is if you put a break between
+                // each item.
+                minimumContentSize = std::max(minimumContentSize, contribution.minimum);
+            } else
+                minimumContentSize += contribution.minimum;
+        } else {
+            minimumContentSize = std::max(contribution.minimum, minimumContentSize);
+            maximumContentSize = std::max(contribution.maximum, maximumContentSize);
+        }
+    }
+
+    if (!m_constraints.isColumnFlow && contributions.size() > 1) {
+        auto inlineGapSize = (contributions.size() - 1) * flexFormattingUtils().computeGap(FlexFormattingUtils::GapType::BetweenItems);
+        maximumContentSize += inlineGapSize;
+        if (!m_constraints.isMultiline)
+            minimumContentSize += inlineGapSize;
+    }
+
+    maximumContentSize = std::max(minimumContentSize, maximumContentSize);
+
+    // Due to negative margins, it is possible that we calculated a negative
+    // intrinsic width. Make sure that we never return a negative width.
+    return { std::max(0_lu, minimumContentSize), std::max(0_lu, maximumContentSize) };
+}
+
 FlexFormattingContext::FlexBaseAndHypotheticalMainSizeList FlexFormattingContext::computeFlexBaseAndHypotheticalMainSizes(FlexLayoutItems& flexItems)
 {
     layoutState().setPhase(LayoutPhase::ComputingFlexBaseSizes);

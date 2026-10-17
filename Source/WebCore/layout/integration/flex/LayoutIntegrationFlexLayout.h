@@ -45,7 +45,7 @@ public:
 
     void layout(RelayoutChildren);
 
-    std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths() const;
+    std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths();
 
     // The container's in-flow children in order-modified document order, rebuilt every layout. Weak pointers because
     // painting/hit-testing/baseline queries read the list after layout, when a child may have been removed.

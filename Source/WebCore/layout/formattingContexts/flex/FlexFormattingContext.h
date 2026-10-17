@@ -125,6 +125,13 @@ public:
     };
     Result layout(FlexLayoutItems&);
 
+    // An in-flow item's min-content and max-content contributions to the container's inline size, margins included.
+    struct IntrinsicWidthContribution {
+        LayoutUnit minimum;
+        LayoutUnit maximum;
+    };
+    std::pair<LayoutUnit, LayoutUnit> minimumMaximumContentSize(const Vector<IntrinsicWidthContribution>&);
+
 private:
     struct FlexBaseAndHypotheticalMainSize {
         LayoutUnit flexBase;
