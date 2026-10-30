@@ -74,6 +74,33 @@ CheckedPtr<RenderMathMLOperator> RenderMathMLBlock::unembellishedOperator() cons
     return nullptr;
 }
 
+static void invalidateEmbellishedOperatorAncestors(RenderMathMLBlock& changedBox)
+{
+    // Whether a box is an embellished operator depends on its children, and the mrow-like box laying it out adds the operator spacing
+    // around it if it is (see RenderMathMLRow::spacingAroundChild()), possibly past a relayout boundary.
+    CheckedPtr<RenderElement> box = &changedBox;
+    while (CheckedPtr parent = dynamicDowncast<RenderMathMLBlock>(box->parent())) {
+        parent->setNeedsLayoutAndInvalidateContentLogicalWidths();
+        if (parent->firstInFlowChildBox() != box.get())
+            break;
+        box = parent.get();
+    }
+}
+
+void RenderMathMLBlock::insertedIntoTree()
+{
+    RenderBlock::insertedIntoTree();
+    if (CheckedPtr parent = dynamicDowncast<RenderMathMLBlock>(this->parent()))
+        invalidateEmbellishedOperatorAncestors(*parent);
+}
+
+void RenderMathMLBlock::willBeRemovedFromTree()
+{
+    if (CheckedPtr parent = dynamicDowncast<RenderMathMLBlock>(this->parent()))
+        invalidateEmbellishedOperatorAncestors(*parent);
+    RenderBlock::willBeRemovedFromTree();
+}
+
 bool RenderMathMLBlock::isChildAllowed(const RenderObject& child, const Style::ComputedStyle&) const
 {
     return is<Element>(child.node());

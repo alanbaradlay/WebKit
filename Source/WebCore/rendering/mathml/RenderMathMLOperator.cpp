@@ -39,6 +39,7 @@
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderElementInlines.h"
+#include "RenderMathMLMath.h"
 #include "RenderText.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include <cmath>
@@ -111,6 +112,19 @@ LayoutUnit RenderMathMLOperator::trailingSpace() const
     LayoutUnit trailingSpace = toUserUnits(protect(element())->defaultTrailingSpace(), style, 0);
     trailingSpace = toUserUnits(protect(element())->trailingSpace(), style, trailingSpace);
     return std::max<LayoutUnit>(0, trailingSpace);
+}
+
+bool RenderMathMLOperator::hasSpacingInBox() const
+{
+    // The parent of the outermost embellished operator lays it out, and adds the spacing around it if it is mrow-like (MathML Core).
+    // FIXME: A table cell doesn't generate the anonymous mrow that would add the spacing, so the operator keeps it inside its box there.
+    CheckedPtr<const RenderBox> embellishedOperator = this;
+    while (CheckedPtr parent = dynamicDowncast<RenderMathMLBlock>(embellishedOperator->parent())) {
+        if (is<RenderMathMLMath>(*parent) || parent->unembellishedOperator() != this)
+            return false;
+        embellishedOperator = parent.get();
+    }
+    return true;
 }
 
 LayoutUnit RenderMathMLOperator::minSize() const
@@ -191,7 +205,7 @@ void RenderMathMLOperator::stretchTo(LayoutUnit width)
     m_stretchWidth = width;
     m_mathOperator.stretchTo(protect(style()), width);
 
-    setLogicalWidth(leadingSpace() + width + trailingSpace() + borderAndPaddingLogicalWidth());
+    setLogicalWidthForMathOperator(width);
     setLogicalHeight(m_mathOperator.ascent() + m_mathOperator.descent() + borderAndPaddingLogicalHeight());
 }
 
@@ -222,23 +236,31 @@ std::pair<LayoutUnit, LayoutUnit> RenderMathMLOperator::computeIntrinsicLogicalW
             preferredWidth -= std::min(LayoutUnit(glyphWidth), preferredWidth + borderAndPaddingLogicalWidth());
         }
     } else
-        preferredWidth = m_mathOperator.maxPreferredWidth();
+        preferredWidth = intrinsicLogicalWidthContributionsForMathContent(m_mathOperator.maxPreferredWidth()).second;
 
-    // FIXME: The spacing should be added to the whole embellished operator (https://webkit.org/b/124831).
-    // FIXME: The spacing should only be added inside (perhaps inferred) mrow (http://www.w3.org/TR/MathML/chapter3.html#presm.opspacing).
-    preferredWidth = leadingSpace() + preferredWidth + trailingSpace();
+    preferredWidth = leadingSpaceInBox() + preferredWidth + trailingSpaceInBox();
     return { preferredWidth, preferredWidth };
 }
 
 void RenderMathMLOperator::constrainIntrinsicLogicalWidthContributionsByMinMax(LayoutUnit& minContentLogicalWidthContribution, LayoutUnit& maxContentLogicalWidthContribution) const
 {
     // The operator spacing goes around the operator's box, so min-width and max-width don't apply to it.
-    auto spacing = leadingSpace() + trailingSpace();
+    auto spacing = leadingSpaceInBox() + trailingSpaceInBox();
     minContentLogicalWidthContribution -= spacing;
     maxContentLogicalWidthContribution -= spacing;
     RenderMathMLToken::constrainIntrinsicLogicalWidthContributionsByMinMax(minContentLogicalWidthContribution, maxContentLogicalWidthContribution);
     minContentLogicalWidthContribution += spacing;
     maxContentLogicalWidthContribution += spacing;
+}
+
+void RenderMathMLOperator::setLogicalWidthForMathOperator(LayoutUnit mathOperatorLogicalWidth)
+{
+    setLogicalWidth(mathOperatorLogicalWidth);
+    auto sizes = sizeAppliedToMathContent(LayoutPhase::Layout);
+    // The callers set the logical height.
+    sizes.logicalHeight = { };
+    applySizeToMathContent(LayoutPhase::Layout, sizes);
+    setLogicalWidth(leadingSpaceInBox() + logicalWidth() + trailingSpaceInBox() + borderAndPaddingLogicalWidth());
 }
 
 void RenderMathMLOperator::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit pageLogicalHeight)
@@ -252,14 +274,14 @@ void RenderMathMLOperator::layoutBlock(RelayoutChildren relayoutChildren, Layout
 
     layoutFloatingChildren();
 
-    LayoutUnit leadingSpaceValue = leadingSpace();
-    LayoutUnit trailingSpaceValue = trailingSpace();
+    LayoutUnit leadingSpaceValue = leadingSpaceInBox();
+    LayoutUnit trailingSpaceValue = trailingSpaceInBox();
 
     if (useMathOperator()) {
         recomputeLogicalWidth();
         for (CheckedPtr child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox())
             child->layoutIfNeeded();
-        setLogicalWidth(leadingSpaceValue + m_mathOperator.width() + trailingSpaceValue + borderAndPaddingLogicalWidth());
+        setLogicalWidthForMathOperator(m_mathOperator.width());
         setLogicalHeight(m_mathOperator.ascent() + m_mathOperator.descent() + borderAndPaddingLogicalHeight());
 
         updateLogicalHeight();
@@ -362,7 +384,7 @@ void RenderMathMLOperator::paint(PaintInfo& info, const LayoutPoint& paintOffset
         return;
 
     auto operatorTopLeft = paintOffset + location();
-    operatorTopLeft.move((writingMode().isBidiLTR() ? leadingSpace() : trailingSpace()) + borderLeft() + paddingLeft(), borderAndPaddingBefore());
+    operatorTopLeft.move((writingMode().isBidiLTR() ? leadingSpaceInBox() : trailingSpaceInBox()) + borderLeft() + paddingLeft(), borderAndPaddingBefore());
 
     m_mathOperator.paint(usedStyle(), info, operatorTopLeft, document().deviceScaleFactor());
 }

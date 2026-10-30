@@ -61,6 +61,8 @@ public:
 
 protected:
     void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
+    void insertedIntoTree() override;
+    void willBeRemovedFromTree() override;
 
     inline LayoutUnit ruleThicknessFallback() const;
 

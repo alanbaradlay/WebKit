@@ -39,7 +39,7 @@ PASS min-width property on mn (larger than width)
 PASS max-width property on mn (content overflowing)
 PASS max-width property on mn (smaller than width)
 PASS min-width property on mn (preferred width)
-FAIL min-width property on mo assert_approx_equals: width expected 500 +/- 1 but got 508.875
+PASS min-width property on mo
 PASS min-width property on mo (larger than width)
 PASS max-width property on mo (content overflowing)
 PASS max-width property on mo (smaller than width)

@@ -35,6 +35,7 @@
 #include "MathMLRowElement.h"
 #include "RenderIterator.h"
 #include "RenderMathMLBlockInlines.h"
+#include "RenderMathMLMath.h"
 #include "RenderMathMLOperator.h"
 #include "RenderMathMLRoot.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -132,13 +133,27 @@ void RenderMathMLRow::stretchVerticalOperatorsAndLayoutChildren()
     }
 }
 
+std::pair<LayoutUnit, LayoutUnit> RenderMathMLRow::spacingAroundChild(const RenderBox& child) const
+{
+    // An mrow-like box adds the lspace and rspace of its embellished operator children around them, unless it is itself an
+    // embellished operator, which leaves the spacing to its parent (MathML Core). <math> always adds it.
+    if (!is<RenderMathMLMath>(*this) && RenderMathMLRow::unembellishedOperator())
+        return { };
+    CheckedPtr mathMLBlock = dynamicDowncast<RenderMathMLBlock>(child);
+    CheckedPtr coreOperator = mathMLBlock ? mathMLBlock->unembellishedOperator() : nullptr;
+    if (!coreOperator)
+        return { };
+    return { coreOperator->leadingSpace(), coreOperator->trailingSpace() };
+}
+
 void RenderMathMLRow::getContentBoundingBox(LayoutUnit& width, LayoutUnit& ascent, LayoutUnit& descent) const
 {
     ascent = 0;
     descent = 0;
     width = 0;
     for (CheckedPtr child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox()) {
-        width += child->marginStart(child->writingMode()) + child->logicalWidth() + child->marginEnd(child->writingMode());
+        auto [leadingSpace, trailingSpace] = spacingAroundChild(*child);
+        width += leadingSpace + child->marginStart(child->writingMode()) + child->logicalWidth() + child->marginEnd(child->writingMode()) + trailingSpace;
         LayoutUnit childAscent = ascentForChild(*child) + child->marginBefore(child->writingMode());
         LayoutUnit childDescent = child->logicalHeight() + child->marginLogicalHeight() - childAscent;
         ascent = std::max(ascent, childAscent);
@@ -150,7 +165,8 @@ LayoutUnit RenderMathMLRow::preferredLogicalWidthOfRowItems()
 {
     LayoutUnit preferredWidth = 0;
     for (CheckedPtr child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox()) {
-        preferredWidth += child->maxContentLogicalWidthContribution() + marginIntrinsicLogicalWidthForChild(*child);
+        auto [leadingSpace, trailingSpace] = spacingAroundChild(*child);
+        preferredWidth += leadingSpace + child->maxContentLogicalWidthContribution() + marginIntrinsicLogicalWidthForChild(*child) + trailingSpace;
     }
     return preferredWidth;
 }
@@ -165,7 +181,8 @@ void RenderMathMLRow::layoutRowItems(LayoutUnit width, LayoutUnit ascent)
 {
     LayoutUnit horizontalOffset = 0;
     for (CheckedPtr child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox()) {
-        horizontalOffset += child->marginStart(child->writingMode());
+        auto [leadingSpace, trailingSpace] = spacingAroundChild(*child);
+        horizontalOffset += leadingSpace + child->marginStart(child->writingMode());
         LayoutUnit childVerticalOffset = ascent - ascentForChild(*child);
         LayoutUnit childWidth = child->logicalWidth();
         LayoutUnit childHorizontalOffset = writingMode().isBidiLTR() ? horizontalOffset : width - horizontalOffset - childWidth;
@@ -175,7 +192,7 @@ void RenderMathMLRow::layoutRowItems(LayoutUnit width, LayoutUnit ascent)
             repaintRect->uniteEvenIfEmpty(child->borderBoxRectInContainer());
             repaintRectangle(*repaintRect);
         }
-        horizontalOffset += childWidth + child->marginEnd(child->writingMode());
+        horizontalOffset += childWidth + child->marginEnd(child->writingMode()) + trailingSpace;
     }
 }
 

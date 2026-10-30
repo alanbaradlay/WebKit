@@ -1,44 +1,44 @@
 
 FAIL mrow (embellished operator) assert_approx_equals: expected 50 +/- 1 but got 0
 FAIL mrow (embellished operator, from in-flow children) assert_approx_equals: expected 50 +/- 1 but got 0
-FAIL mrow (not embellished operator) assert_approx_equals: expected 50 +/- 1 but got 0
-FAIL mrow (not embellished operator, from in-flow children) assert_approx_equals: expected 50 +/- 1 but got 0
-FAIL mstyle (embellished operator) assert_approx_equals: expected 50 +/- 1 but got 0
-FAIL mstyle (embellished operator, from in-flow children) assert_approx_equals: expected 50 +/- 1 but got 0
-FAIL mstyle (not embellished operator) assert_approx_equals: expected 50 +/- 1 but got 0
-FAIL mstyle (not embellished operator, from in-flow children) assert_approx_equals: expected 50 +/- 1 but got 0
-FAIL mphantom (embellished operator) assert_approx_equals: expected 50 +/- 1 but got 0
-FAIL mphantom (embellished operator, from in-flow children) assert_approx_equals: expected 50 +/- 1 but got 0
-FAIL mphantom (not embellished operator) assert_approx_equals: expected 50 +/- 1 but got 0
-FAIL mphantom (not embellished operator, from in-flow children) assert_approx_equals: expected 50 +/- 1 but got 0
-FAIL mpadded (embellished operator) assert_approx_equals: expected 50 +/- 1 but got 0
-FAIL mpadded (embellished operator, from in-flow children) assert_approx_equals: expected 50 +/- 1 but got 0
-FAIL mpadded (not embellished operator) assert_approx_equals: expected 50 +/- 1 but got 0
-FAIL mpadded (not embellished operator, from in-flow children) assert_approx_equals: expected 50 +/- 1 but got 0
-FAIL merror (embellished operator) assert_approx_equals: expected 50 +/- 1 but got 0
-FAIL merror (embellished operator, from in-flow children) assert_approx_equals: expected 50 +/- 1 but got 0
-FAIL merror (not embellished operator) assert_approx_equals: expected 50 +/- 1 but got 1
-FAIL merror (not embellished operator, from in-flow children) assert_approx_equals: expected 50 +/- 1 but got 1
-FAIL mprescripts (embellished operator) assert_approx_equals: expected 50 +/- 1 but got 0
-FAIL mprescripts (embellished operator, from in-flow children) assert_approx_equals: expected 50 +/- 1 but got 0
-FAIL mprescripts (not embellished operator) assert_approx_equals: expected 50 +/- 1 but got 0
-FAIL mprescripts (not embellished operator, from in-flow children) assert_approx_equals: expected 50 +/- 1 but got 0
-FAIL none (embellished operator) assert_approx_equals: expected 50 +/- 1 but got 0
-FAIL none (embellished operator, from in-flow children) assert_approx_equals: expected 50 +/- 1 but got 0
-FAIL none (not embellished operator) assert_approx_equals: expected 50 +/- 1 but got 0
-FAIL none (not embellished operator, from in-flow children) assert_approx_equals: expected 50 +/- 1 but got 0
-FAIL unknown (embellished operator) assert_approx_equals: expected 50 +/- 1 but got 0
-FAIL unknown (embellished operator, from in-flow children) assert_approx_equals: expected 50 +/- 1 but got 0
-FAIL unknown (not embellished operator) assert_approx_equals: expected 50 +/- 1 but got 0
-FAIL unknown (not embellished operator, from in-flow children) assert_approx_equals: expected 50 +/- 1 but got 0
+PASS mrow (not embellished operator)
+PASS mrow (not embellished operator, from in-flow children)
+PASS mstyle (embellished operator)
+PASS mstyle (embellished operator, from in-flow children)
+PASS mstyle (not embellished operator)
+PASS mstyle (not embellished operator, from in-flow children)
+PASS mphantom (embellished operator)
+PASS mphantom (embellished operator, from in-flow children)
+PASS mphantom (not embellished operator)
+PASS mphantom (not embellished operator, from in-flow children)
+PASS mpadded (embellished operator)
+PASS mpadded (embellished operator, from in-flow children)
+PASS mpadded (not embellished operator)
+PASS mpadded (not embellished operator, from in-flow children)
+PASS merror (embellished operator)
+PASS merror (embellished operator, from in-flow children)
+PASS merror (not embellished operator)
+PASS merror (not embellished operator, from in-flow children)
+PASS mprescripts (embellished operator)
+PASS mprescripts (embellished operator, from in-flow children)
+PASS mprescripts (not embellished operator)
+PASS mprescripts (not embellished operator, from in-flow children)
+PASS none (embellished operator)
+PASS none (embellished operator, from in-flow children)
+PASS none (not embellished operator)
+PASS none (not embellished operator, from in-flow children)
+PASS unknown (embellished operator)
+PASS unknown (embellished operator, from in-flow children)
+PASS unknown (not embellished operator)
+PASS unknown (not embellished operator, from in-flow children)
 FAIL mfenced (embellished operator) assert_approx_equals: expected 50 +/- 1 but got 0
 FAIL mfenced (embellished operator, from in-flow children) assert_approx_equals: expected 50 +/- 1 but got 0
-FAIL mfenced (not embellished operator) assert_approx_equals: expected 50 +/- 1 but got 25
-FAIL mfenced (not embellished operator, from in-flow children) assert_approx_equals: expected 50 +/- 1 but got 83.3125
-FAIL a (embellished operator) assert_approx_equals: expected 50 +/- 1 but got 0
-FAIL a (embellished operator, from in-flow children) assert_approx_equals: expected 50 +/- 1 but got 0
-FAIL a (not embellished operator) assert_approx_equals: expected 50 +/- 1 but got 0
-FAIL a (not embellished operator, from in-flow children) assert_approx_equals: expected 50 +/- 1 but got 0
+FAIL mfenced (not embellished operator) assert_approx_equals: expected 50 +/- 1 but got 75
+FAIL mfenced (not embellished operator, from in-flow children) assert_approx_equals: expected 50 +/- 1 but got 133.3125
+PASS a (embellished operator)
+PASS a (embellished operator, from in-flow children)
+PASS a (not embellished operator)
+PASS a (not embellished operator, from in-flow children)
 X
 X
 X

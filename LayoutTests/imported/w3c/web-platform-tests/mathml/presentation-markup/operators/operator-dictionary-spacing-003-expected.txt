@@ -1,6 +1,37 @@
 
-PASS Operator dictionary chunk 1 - lspace/rspace
-PASS Operator dictionary chunk 2 - lspace/rspace
-PASS Operator dictionary chunk 3 - lspace/rspace
-PASS Operator dictionary chunk 4 - lspace/rspace
-
+FAIL Operator dictionary chunk 1 - lspace/rspace assert_approx_equals: lspace (/ infix) expected 11.109375 +/- 1 but got 2.765625
+FAIL Operator dictionary chunk 2 - lspace/rspace assert_approx_equals: lspace (⊗ infix) expected 8.328125 +/- 1 but got 11.109375
+FAIL Operator dictionary chunk 3 - lspace/rspace assert_approx_equals: lspace (⦞ prefix) expected 0 +/- 1 but got 13.875
+FAIL Operator dictionary chunk 4 - lspace/rspace assert_approx_equals: lspace (⫛ infix) expected 11.109375 +/- 1 but got 13.875
+lspace/rspace for "/" (infix):
+ 
+/
+ 
+ VS
+ 
+/
+ 
+lspace/rspace for "⊗" (infix):
+ 
+⊗
+ 
+ VS
+ 
+⊗
+ 
+lspace/rspace for "⦞" (prefix):
+ 
+⦞
+ 
+ VS
+ 
+⦞
+ 
+lspace/rspace for "⫛" (infix):
+ 
+⫛
+ 
+ VS
+ 
+⫛
+ 

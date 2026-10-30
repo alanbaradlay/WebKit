@@ -52,6 +52,7 @@ protected:
     void getContentBoundingBox(LayoutUnit& width, LayoutUnit& ascent, LayoutUnit& descent) const;
     void layoutRowItems(LayoutUnit width, LayoutUnit ascent);
     LayoutUnit preferredLogicalWidthOfRowItems();
+    std::pair<LayoutUnit, LayoutUnit> spacingAroundChild(const RenderBox&) const;
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidthContributions() override;
 
 private:
